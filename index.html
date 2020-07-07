@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@16/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+    ></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const Counter = ({ value }) => <p>{value}</p>;
+
+      class CounterAppClassImpl extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            counts: [32, 43, 65, 0],
+          };
+
+          this.increament = this.increament.bind(this);
+          this.decreament = this.decreament.bind(this);
+        }
+
+        addCounter = () => {
+          this.setState({
+            counts: this.state.counts.concat([0]),
+          });
+        };
+
+        increament(index) {
+          this.setState({
+            counts: this.state.counts.map((count, idx) =>
+              idx === index ? count + 1 : count
+            ),
+          });
+        }
+
+        decreament(index) {
+          this.setState({
+            counts: this.state.counts.map((count, idx) =>
+              idx === index ? count - 1 : count
+            ),
+          });
+        }
+
+        deleteCounter = () => {
+            this.setState({
+            counts: this.state.counts.map((count, idx) =>
+            this.state.counts.splice(idx,1)
+            ),
+          });
+        };
+
+        render() {
+          console.log("render");
+          return (
+            <div>
+              {this.state.counts.map((count, idx) => {
+                return (
+                  <div
+                    style={{ border: "1px solid black", margin: "10px" }}
+                    key={idx}
+                  >
+                    <Counter value={count} />
+                    <button onClick={() => this.increament(idx)}>
+                      Increament
+                    </button>
+                    <button onClick={() => this.decreament(idx)}>
+                      Decreament
+                    </button>
+                    <button onClick={() => this.deleteCounter(idx)}>Delete</button>
+                  </div>
+                );
+              })}
+              <button onClick={this.addCounter}>Add Counter</button>
+            </div>
+          );
+        }
+      }
+
+      const CounterApp = ({}) => {
+        const [counts, setCounts] = React.useState([5, 0, 8]);
+
+        const increament = (index) =>
+          setCounts((data) =>
+            data.map((count, idx) => (idx === index ? count + 1 : count))
+          );
+
+        const decreament = (index) =>
+          setCounts((data) =>
+            data.map((count, idx) => (idx === index ? count - 1 : count))
+          );
+
+        const addCounter = () => setCounts((data) => data.concat([0]));
+
+        return (
+          <div>
+            {counts.map((count, idx) => {
+              return (
+                <div
+                  style={{ border: "1px solid black", margin: "10px" }}
+                  key={idx}
+                >
+                  <Counter value={count} />
+                  <button onClick={() => increament(idx)}>Increament</button>
+                  <button onClick={() => decreament(idx)}>Decreament</button>
+                  <button onClick={() => {}}>Delete</button>
+                </div>
+              );
+            })}
+            <button onClick={addCounter}>Add Counter</button>
+          </div>
+        );
+      };
+
+      const TodoApp = () => {
+        const [todos, setTodos] = React.useState(["Hey World!!!"]);
+
+        const [inputvalue, setInputvalue] = React.useState("");
+
+        const addTodo = () => {
+          setTodos((data) => data.concat([inputvalue]));
+        };
+
+        return (
+          <div>
+            <input
+              type="text"
+              value={inputvalue}
+              onChange={(event) => setInputvalue(event.target.value)}
+            />
+            <button onClick={addTodo}>Add Todo</button>
+
+            <ul>
+              {todos.map((todo, index) => (
+                <li key={index}>{todo}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      };
+
+      class CountriesApp extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            countries: [],
+            show: true,
+          };
+        }
+
+        UNSAFE_componentWillMount() {
+          console.log("UNSAFE_componentWillMount");
+        }
+
+        componentDidMount() {
+          fetch("https://restcountries.eu/rest/v2/all")
+            .then((res) => res.json())
+            .then((countries) => {
+              this.setState({
+                countries,
+              });
+            });
+        }
+
+        UNSAFE_componentWillUpdate(nextProps, nextState) {
+          console.log("UNSAFE_componentWillUpdate()");
+          console.log("nextProps:::", nextProps);
+          console.log("nextState:::", nextState);
+          console.log("this.props:::", this.props);
+          console.log("this.state:::", this.state);
+          console.log("UNSAFE_componentWillUpdate()");
+        }
+
+        componentDidUpdate(preProps, preState) {
+          console.log("componentDidUpdate()");
+          console.log("preProps:::", preProps);
+          console.log("preState:::", preState);
+          console.log("this.props:::", this.props);
+          console.log("this.state:::", this.state);
+          console.log("componentDidUpdate()");
+        }
+
+        render() {
+          return (
+            <div>
+              <button
+                onClick={(_) => this.setState({ show: !this.state.show })}
+              >
+                Remove List
+              </button>
+              {this.state.show ? (
+                <CountriesList countries={this.state.countries} />
+              ) : (
+                <h1>Dude</h1>
+              )}
+            </div>
+          );
+        }
+      }
+
+      class CountriesList extends React.Component {
+        constructor(props) {
+          super(props);
+        }
+
+        UNSAFE_componentWillReceiveProps(nextProps) {
+          console.log(
+            "UNSAFE_componentWillReceiveProps::::",
+            nextProps,
+            this.props
+          );
+        }
+
+        componentWillUnmount() {
+          console.log("componentWillUnmount");
+        }
+        render() {
+          return (
+            <ul>
+              {this.props.countries.map((data, index) => (
+                <li key={index}>{data.name}</li>
+              ))}
+            </ul>
+          );
+        }
+      }
+
+      ReactDOM.render(<CounterAppClassImpl />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
